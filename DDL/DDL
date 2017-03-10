@@ -1,0 +1,82 @@
+CREATE TABLE attributes
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    name CHAR(30) NOT NULL,
+    description TEXT
+);
+CREATE TABLE attributes_value
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    id_attribute INTEGER NOT NULL,
+    value TEXT NOT NULL,
+    CONSTRAINT attribute_value_attributes_id_fk FOREIGN KEY (id_attribute) REFERENCES attributes (id)
+);
+CREATE TABLE category
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT
+);
+CREATE TABLE goods
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    cost INTEGER NOT NULL,
+    description TEXT
+);
+CREATE TABLE layouts
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    name CHAR(30) NOT NULL,
+    description TEXT
+);
+CREATE TABLE leafs
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    name CHAR(30) NOT NULL,
+    id_category INTEGER NOT NULL,
+    description TEXT,
+    CONSTRAINT leaf_category_id_fk FOREIGN KEY (id_category) REFERENCES category (id)
+);
+CREATE TABLE link_category_and_category
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    id_parent INTEGER NOT NULL,
+    id_children INTEGER NOT NULL,
+    CONSTRAINT link_category_and_category_category_id_fk FOREIGN KEY (id_parent) REFERENCES category (id)
+);
+CREATE UNIQUE INDEX link_category_and_category_id_parent_uindex ON link_category_and_category (id_parent);
+CREATE UNIQUE INDEX link_category_and_category_id_children_uindex ON link_category_and_category (id_children);
+CREATE TABLE link_goods_and_attribute_value
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    id_goods INTEGER NOT NULL,
+    id_attribute_value INTEGER NOT NULL,
+    CONSTRAINT goods_data_goods_id_fk FOREIGN KEY (id_goods) REFERENCES goods (id),
+    CONSTRAINT goods_data_attribute_value_id_fk FOREIGN KEY (id_attribute_value) REFERENCES attributes_value (id)
+);
+CREATE TABLE link_goods_and_leafs
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    id_leafs INTEGER NOT NULL,
+    id_goods INTEGER NOT NULL,
+    CONSTRAINT link_goods_and_leafs_leafs_id_fk FOREIGN KEY (id_leafs) REFERENCES leafs (id),
+    CONSTRAINT link_goods_and_leafs_goods_id_fk FOREIGN KEY (id_goods) REFERENCES goods (id)
+);
+CREATE UNIQUE INDEX link_goods_and_leafs_id_goods_uindex ON link_goods_and_leafs (id_goods);
+CREATE TABLE link_layout_and_atribyte
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    id_attribute INTEGER NOT NULL,
+    id_goods_layout INTEGER NOT NULL,
+    CONSTRAINT layout_atribyte_attributes_id_fk FOREIGN KEY (id_attribute) REFERENCES attributes (id),
+    CONSTRAINT layout_atribyte_layouts_id_fk FOREIGN KEY (id_goods_layout) REFERENCES layouts (id)
+);
+CREATE TABLE link_layout_and_goods
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    id_layouts INTEGER NOT NULL,
+    id_goods INTEGER NOT NULL,
+    CONSTRAINT goods_layout_layouts_id_fk FOREIGN KEY (id_layouts) REFERENCES layouts (id),
+    CONSTRAINT goods_layout_goods_id_fk FOREIGN KEY (id_goods) REFERENCES goods (id)
+);
+CREATE UNIQUE INDEX goods_layout_id_goods_uindex ON link_layout_and_goods (id_goods);
